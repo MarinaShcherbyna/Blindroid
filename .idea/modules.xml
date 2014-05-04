@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Blindroid.iml" filepath="$PROJECT_DIR$/Blindroid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blindroid/blindroid.iml" filepath="$PROJECT_DIR$/blindroid/blindroid.iml" />
+    </modules>
+  </component>
+</project>
+
