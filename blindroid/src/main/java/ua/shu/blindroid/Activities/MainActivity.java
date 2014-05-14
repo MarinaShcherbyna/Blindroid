@@ -69,7 +69,7 @@ public class MainActivity extends Activity {
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
                     txtText.setText(text.get(0));
-                    SpeechHelper.parseText(text.get(0));
+                    SpeechHelper.parseText(text.get(0), MainActivity.this);
                 }
                 break;
             }

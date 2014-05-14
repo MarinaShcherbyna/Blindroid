@@ -4,6 +4,10 @@ import android.content.Context;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
+import java.util.ArrayList;
+
+import ua.shu.blindroid.Entity.Contact;
+
 public class SpeechHelper {
 
     private static final String ADD_CONTACT_TEXT = "Додати контакт";
@@ -11,7 +15,7 @@ public class SpeechHelper {
 
   enum Functions {ADD_CONTACT, CALL_CONTACT}
 
-   public static void parseText(String speechText)
+   public static void parseText(String speechText, Context context)
   {
         Functions currentFunction = getMaxSimiliraty(speechText);
 
@@ -21,6 +25,8 @@ public class SpeechHelper {
                 break;
             case CALL_CONTACT:
                 Log.e("123", CALL_CONTACT_TEXT + " "  + speechText);
+                Contact contact = CallContactHelper.getMostSimilarContact(context, speechText);
+                Log.e("123", "Result contact name - " + contact.name + " with phone : " + contact.phoneNumber);
                 break;
         }
   }
@@ -31,18 +37,37 @@ public class SpeechHelper {
         Functions currFunction = null;
 
         for (Functions func : Functions.values()) {
-            double funcSimilarity = LevenshteinDistance.similarity(speechText, getStringByFunctionEnum(func));
-            Log.e("123", getStringByFunctionEnum(func) + "-" + funcSimilarity);
-            if (similarity < funcSimilarity) {
-                currFunction = func;
-                similarity = funcSimilarity;
+                String str;
+                if (CountWords(getStringByFunctionEnum(func)) == 1) {
+                    str = getSplittedWords(speechText)[0];
+                } else {
+                    str = speechText;
+                }
+
+                double funcSimilarity = LevenshteinDistance.similarity(str, getStringByFunctionEnum(func));
+
+                Log.e("123", str + "-" + funcSimilarity);
+                if (similarity < funcSimilarity) {
+                    currFunction = func;
+                    similarity = funcSimilarity;
+                }
             }
-        }
 
         return currFunction;
     }
 
-    private static String getStringByFunctionEnum(Functions f)
+    private static int CountWords (String in) {
+        String trim = in.trim();
+        if (trim.isEmpty()) return 0;
+        return trim.split("\\s+").length; //separate string around spaces
+    }
+
+    private static String[] getSplittedWords(String speechText)
+    {
+        return speechText.split(" ");
+    }
+
+    public static String getStringByFunctionEnum(Functions f)
     {
         switch (f) {
             case ADD_CONTACT:
@@ -68,4 +93,6 @@ public class SpeechHelper {
             }
         });
     }
+
+
 }
