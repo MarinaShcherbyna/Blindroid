@@ -4,9 +4,10 @@ import android.content.Context;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
-import java.util.ArrayList;
-
 import ua.shu.blindroid.Entity.Contact;
+import ua.shu.blindroid.Helper.SimilarityAlghoritms.AbbreviationScoring;
+import ua.shu.blindroid.Helper.SimilarityAlghoritms.LevenshteinDistance;
+import ua.shu.blindroid.Helper.SimilarityAlghoritms.StringScore;
 
 public class SpeechHelper {
 
@@ -19,6 +20,7 @@ public class SpeechHelper {
   {
         Functions currentFunction = getMaxSimiliraty(speechText);
 
+
         switch (currentFunction) {
             case ADD_CONTACT:
                 Log.e("123", ADD_CONTACT_TEXT + " " +speechText);
@@ -26,7 +28,16 @@ public class SpeechHelper {
             case CALL_CONTACT:
                 Log.e("123", CALL_CONTACT_TEXT + " "  + speechText);
                 Contact contact = CallContactHelper.getMostSimilarContact(context, speechText);
-                Log.e("123", "Result contact name - " + contact.name + " with phone : " + contact.phoneNumber);
+
+                if (contact == null) {
+                    Log.e("123", "please try again");
+                } else {
+
+                    Log.e("123", "Result contact name - " + contact.name + " with phone : " + contact.phoneNumber);
+//                    CallContactHelper.callContact(contact, context);
+                }
+
+
                 break;
         }
   }
@@ -45,7 +56,7 @@ public class SpeechHelper {
                 }
 
                 double funcSimilarity = LevenshteinDistance.similarity(str, getStringByFunctionEnum(func));
-
+                Log.e("124", "StringScore similarity '" + str +"' AND '" + getStringByFunctionEnum(func) +"'  -  " + StringScore.score(str, getStringByFunctionEnum(func)));
                 Log.e("123", str + "-" + funcSimilarity);
                 if (similarity < funcSimilarity) {
                     currFunction = func;
