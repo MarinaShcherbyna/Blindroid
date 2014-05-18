@@ -16,12 +16,31 @@ public class CommandHelper {
 
     public static final String ADD_CONTACT_TEXT = "Додати контакт";
     public static final String CALL_CONTACT_TEXT = "Зателефонувати";
-    public enum Functions {ADD_CONTACT, CALL_CONTACT}
+    public static final String READ_UNREADED_SMS_TEXT = "Прочитати нові повідомлення";
+
+
+    public enum Functions {
+        ADD_CONTACT (ADD_CONTACT_TEXT),
+        CALL_CONTACT (CALL_CONTACT_TEXT),
+        UNREADED_SMS (READ_UNREADED_SMS_TEXT);
+
+        public String name;
+
+        private Functions(String s) {
+            name = s;
+        }
+
+    }
 
     public static void parseCommand(String speechText, MainActivity context)
     {
         Functions currentFunction = getMaxSimiliraty(speechText);
 //        SpeechHelper.speechText(context,speechText);
+
+        if (currentFunction == null) {
+            ErrorHelper.nullResult(context);
+            return;
+        }
 
         switch (currentFunction) {
             case ADD_CONTACT:
@@ -41,10 +60,13 @@ public class CommandHelper {
 //                    CallContactHelper.callContact(contact, context);
                     context.txtText.setText("Result contact name - " + contact.name + " with phone : " + contact.phoneNumber);
                     String resultText = "Зателефонувати - " + contact.name + " за номером : " + contact.phoneNumber + "?";
+                    context.lastContact = contact;
                     CommandHelper.checkSpeech(resultText, context);
                 }
-
                 break;
+            case UNREADED_SMS:
+                Log.e("123", CALL_CONTACT_TEXT + " "  + speechText);
+                SMSHelper.readUnreadedSms(context);
         }
     }
 
@@ -77,7 +99,11 @@ public class CommandHelper {
     {
         AnswerResults result = SimilarityHelper.getMaxSimilarity(resultText);
 
-        Log.i("123", result.name);
+        if (result == AnswerResults.ANSWER_YES) {
+            CallContactHelper.callContact(context.lastContact, context);
+        } else {
+            ErrorHelper.playBeep();
+        }
     }
 
 }

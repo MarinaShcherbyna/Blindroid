@@ -10,6 +10,7 @@ import android.os.Handler;
 
 import java.io.IOException;
 
+import ua.shu.blindroid.Activities.MainActivity;
 import ua.shu.blindroid.R;
 
 public class ErrorHelper {
@@ -32,7 +33,11 @@ public class ErrorHelper {
             }
         }, 1000);
 
+    }
 
+    public static void nullResult(MainActivity context)
+    {
+        SpeechHelper.speechText(context, "Ничого нэ знайдэно");
     }
 
 }

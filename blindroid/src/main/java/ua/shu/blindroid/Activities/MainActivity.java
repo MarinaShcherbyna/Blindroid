@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import ua.shu.blindroid.Entity.Contact;
 import ua.shu.blindroid.Helper.CommandHelper;
 import ua.shu.blindroid.Helper.SpeechHelper;
 import ua.shu.blindroid.R;
@@ -21,6 +22,8 @@ public class MainActivity extends Activity {
 
     private ImageButton btnSpeak;
     public TextView txtText;
+
+    public Contact lastContact;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

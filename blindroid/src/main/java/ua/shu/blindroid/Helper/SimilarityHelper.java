@@ -17,14 +17,14 @@ public class SimilarityHelper {
 
         for (Functions func : Functions.values()) {
             String str;
-            if (CountWords(getStringByFunctionEnum(func)) == 1) {
+            if (CountWords(func.name) == 1) {
                 str = getSplittedWords(speechText)[0];
             } else {
                 str = speechText;
             }
 
-            double funcSimilarity = LevenshteinDistance.similarity(str, getStringByFunctionEnum(func));
-            Log.e("124", "StringScore similarity '" + str + "' AND '" + getStringByFunctionEnum(func) + "'  -  " + StringScore.score(str, getStringByFunctionEnum(func)));
+            double funcSimilarity = LevenshteinDistance.similarity(str, func.name);
+            Log.e("124", "StringScore similarity '" + str + "' AND '" + func.name + "'  -  " + StringScore.score(str, func.name));
             Log.e("123", str + "-" + funcSimilarity);
             if (similarity < funcSimilarity) {
                 currFunction = func;
@@ -72,17 +72,5 @@ public class SimilarityHelper {
         return speechText.split(" ");
     }
 
-    public static String getStringByFunctionEnum(Functions f)
-    {
-        switch (f) {
-            case ADD_CONTACT:
-                return ADD_CONTACT_TEXT;
-
-            case CALL_CONTACT:
-                return CALL_CONTACT_TEXT;
-            default:
-                return null;
-        }
-    }
 
 }

@@ -85,8 +85,6 @@ public class SpeechHelper {
             } catch (BusyException e) {
                 Toast.makeText(context, "BusyException", Toast.LENGTH_LONG).show();
             }
-
-
     }
 
 
