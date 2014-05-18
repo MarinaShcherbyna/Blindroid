@@ -3,25 +3,24 @@ package ua.shu.blindroid.Activities;
 import java.util.ArrayList;
 
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
-import android.view.Menu;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import ua.shu.blindroid.Helper.CommandHelper;
 import ua.shu.blindroid.Helper.SpeechHelper;
 import ua.shu.blindroid.R;
 
 public class MainActivity extends Activity {
 
-    protected static final int RESULT_SPEECH = 1;
+    public static final int START_CODE_SPEECH = 1;
+    public static final int CHECK_RESULT_SPEECH = 2;
 
     private ImageButton btnSpeak;
-    private TextView txtText;
+    public TextView txtText;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,22 +35,8 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-
-                Intent intent = new Intent(
-                        RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, "uk-UA");
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "uk-UA");
-
-                try {
-                    startActivityForResult(intent, RESULT_SPEECH);
-                    txtText.setText("");
-                } catch (ActivityNotFoundException a) {
-                    Toast t = Toast.makeText(getApplicationContext(),
-                            "Ops! Your device doesn't support Speech to Text",
-                            Toast.LENGTH_SHORT);
-                    t.show();
-                }
+                  txtText.setText("");
+                  SpeechHelper.runGoogleSpeechToText(MainActivity.this, START_CODE_SPEECH);
             }
         });
 
@@ -61,19 +46,25 @@ public class MainActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        if (resultCode == RESULT_OK && null != data) {
+
+            ArrayList<String> text = data
+                    .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
+            txtText.setText(text.get(0));
+
         switch (requestCode) {
-            case RESULT_SPEECH: {
-                if (resultCode == RESULT_OK && null != data) {
-
-                    ArrayList<String> text = data
-                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-
-                    txtText.setText(text.get(0));
-                    SpeechHelper.parseText(text.get(0), MainActivity.this);
-                }
-                break;
+            case START_CODE_SPEECH: {
+                CommandHelper.parseCommand(text.get(0), MainActivity.this);
             }
+            break;
 
+            case CHECK_RESULT_SPEECH:
+            {
+                CommandHelper.checkAnswer(text.get(0), MainActivity.this);
+            }
+            break;
+        }
         }
     }
 

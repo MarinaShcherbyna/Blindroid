@@ -1,108 +1,92 @@
 package ua.shu.blindroid.Helper;
 
+import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
+import android.widget.EditText;
+import android.widget.Toast;
 
-import ua.shu.blindroid.Entity.Contact;
-import ua.shu.blindroid.Helper.SimilarityAlghoritms.AbbreviationScoring;
-import ua.shu.blindroid.Helper.SimilarityAlghoritms.LevenshteinDistance;
-import ua.shu.blindroid.Helper.SimilarityAlghoritms.StringScore;
+import org.ispeech.SpeechSynthesis;
+import org.ispeech.SpeechSynthesisEvent;
+import org.ispeech.error.BusyException;
+import org.ispeech.error.InvalidApiKeyException;
+import org.ispeech.error.NoNetworkException;
+
+
+import ua.shu.blindroid.Activities.MainActivity;
+
+
 
 public class SpeechHelper {
 
-    private static final String ADD_CONTACT_TEXT = "Додати контакт";
-    private static final String CALL_CONTACT_TEXT = "Зателефонувати";
+    public static void runGoogleSpeechToText(MainActivity context,int speechCode) {
+        Intent intent = new Intent(
+                RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 
-  enum Functions {ADD_CONTACT, CALL_CONTACT}
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, "uk-UA");
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "uk-UA");
 
-   public static void parseText(String speechText, Context context)
-  {
-        Functions currentFunction = getMaxSimiliraty(speechText);
-
-
-        switch (currentFunction) {
-            case ADD_CONTACT:
-                Log.e("123", ADD_CONTACT_TEXT + " " +speechText);
-                break;
-            case CALL_CONTACT:
-                Log.e("123", CALL_CONTACT_TEXT + " "  + speechText);
-                Contact contact = CallContactHelper.getMostSimilarContact(context, speechText);
-
-                if (contact == null) {
-                    Log.e("123", "please try again");
-                } else {
-
-                    Log.e("123", "Result contact name - " + contact.name + " with phone : " + contact.phoneNumber);
-//                    CallContactHelper.callContact(contact, context);
-                }
-
-
-                break;
-        }
-  }
-
-  private static Functions getMaxSimiliraty(String speechText)
-    {
-        double similarity = 0;
-        Functions currFunction = null;
-
-        for (Functions func : Functions.values()) {
-                String str;
-                if (CountWords(getStringByFunctionEnum(func)) == 1) {
-                    str = getSplittedWords(speechText)[0];
-                } else {
-                    str = speechText;
-                }
-
-                double funcSimilarity = LevenshteinDistance.similarity(str, getStringByFunctionEnum(func));
-                Log.e("124", "StringScore similarity '" + str +"' AND '" + getStringByFunctionEnum(func) +"'  -  " + StringScore.score(str, getStringByFunctionEnum(func)));
-                Log.e("123", str + "-" + funcSimilarity);
-                if (similarity < funcSimilarity) {
-                    currFunction = func;
-                    similarity = funcSimilarity;
-                }
-            }
-
-        return currFunction;
-    }
-
-    private static int CountWords (String in) {
-        String trim = in.trim();
-        if (trim.isEmpty()) return 0;
-        return trim.split("\\s+").length; //separate string around spaces
-    }
-
-    private static String[] getSplittedWords(String speechText)
-    {
-        return speechText.split(" ");
-    }
-
-    public static String getStringByFunctionEnum(Functions f)
-    {
-        switch (f) {
-            case ADD_CONTACT:
-                return ADD_CONTACT_TEXT;
-
-            case CALL_CONTACT:
-                return CALL_CONTACT_TEXT;
-            default:
-                return null;
+        try {
+            context.startActivityForResult(intent, speechCode);
+        } catch (ActivityNotFoundException a) {
+            Toast t = Toast.makeText(context,
+                    "Ops! Your device doesn't support Speech to Text",
+                    Toast.LENGTH_SHORT);
+            t.show();
         }
     }
 
-    @Deprecated
-    public static void speechToText(Context context, String text)
-    {
-        final TextToSpeech textToSpeech;
-            textToSpeech = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int i) {
-                if (i != TextToSpeech.ERROR) {
-//                    textToSpeech.setLanguage(Locale.)
-                }
+
+
+    public static void speechText(final MainActivity context, String text) {
+        SpeechSynthesisEvent event = new SpeechSynthesisEvent() {
+
+            public void onPlayFailed(Exception e) {
+                Log.e("123", "onPlayFailed");
+
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage("Error[TTSActivity]: " + e.toString())
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
             }
-        });
+        };
+
+        speechText(context, text, event);
+
+    }
+
+    public static void speechText(final MainActivity context, String text, SpeechSynthesisEvent event) {
+            SpeechSynthesis synthesis = null;
+            try {
+                synthesis = SpeechSynthesis.getInstance(context);
+                synthesis.setSpeechSynthesisEvent(event);
+
+                    synthesis.setVoiceType("rurussianmale");
+                    synthesis.speak(text);
+
+
+            } catch (InvalidApiKeyException e) {
+                Log.e("123", "Invalid API key\n");
+                Toast.makeText(context, "ERROR: Invalid API key", Toast.LENGTH_LONG).show();
+            } catch (NoNetworkException e) {
+                e.printStackTrace();
+                Toast.makeText(context, "NoNetworkException", Toast.LENGTH_LONG).show();
+            } catch (BusyException e) {
+                Toast.makeText(context, "BusyException", Toast.LENGTH_LONG).show();
+            }
+
+
     }
 
 
