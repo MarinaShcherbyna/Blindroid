@@ -3,16 +3,22 @@ package ua.shu.blindroid.Activities;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import ua.shu.blindroid.Entity.Contact;
 import ua.shu.blindroid.Helper.CommandHelper;
+import ua.shu.blindroid.Helper.PhoneCall.IncomingCallHelper;
 import ua.shu.blindroid.Helper.SpeechHelper;
+import ua.shu.blindroid.MainApplication;
 import ua.shu.blindroid.R;
 
 public class MainActivity extends Activity {
@@ -22,13 +28,16 @@ public class MainActivity extends Activity {
 
     private ImageButton btnSpeak;
     public TextView txtText;
-
+    private BroadcastReceiver mReceiver;
     public Contact lastContact;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+//        MainApplication mainApplication = (MainApplication) getApplication();
+//        mainApplication.setMainActivity(this);
 
         txtText = (TextView) findViewById(R.id.txtText);
 
@@ -42,6 +51,18 @@ public class MainActivity extends Activity {
                   SpeechHelper.runGoogleSpeechToText(MainActivity.this, START_CODE_SPEECH);
             }
         });
+
+
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.e("123", "Called");
+                IncomingCallHelper.callRecieved(MainActivity.this, context);
+            }
+        };
+
+        this.registerReceiver(mReceiver, new IntentFilter("android.intent.action.PHONE_STATE"));
+
 
     }
 
@@ -71,5 +92,9 @@ public class MainActivity extends Activity {
         }
     }
 
-
+    @Override
+    protected void onDestroy() {
+        this.unregisterReceiver(mReceiver);
+        super.onDestroy();
+    }
 }
