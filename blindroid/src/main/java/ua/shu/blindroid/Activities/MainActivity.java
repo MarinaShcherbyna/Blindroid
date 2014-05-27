@@ -26,7 +26,7 @@ public class MainActivity extends Activity {
     public static final int START_CODE_SPEECH = 1;
     public static final int CHECK_RESULT_SPEECH = 2;
 
-    private ImageButton btnSpeak;
+    public View view;
     public TextView txtText;
     private BroadcastReceiver mReceiver;
     public Contact lastContact;
@@ -41,9 +41,9 @@ public class MainActivity extends Activity {
 
         txtText = (TextView) findViewById(R.id.txtText);
 
-        btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
+        view = findViewById(R.id.view);
 
-        btnSpeak.setOnClickListener(new View.OnClickListener() {
+        view.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {

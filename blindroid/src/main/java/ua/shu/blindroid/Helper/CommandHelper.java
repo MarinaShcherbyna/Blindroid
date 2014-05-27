@@ -3,12 +3,15 @@ package ua.shu.blindroid.Helper;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.util.Log;
+import android.view.WindowManager;
 
 import org.ispeech.SpeechSynthesisEvent;
 
 import ua.shu.blindroid.Activities.MainActivity;
 import ua.shu.blindroid.Entity.Contact;
+import ua.shu.blindroid.R;
 
 import static ua.shu.blindroid.Helper.SimilarityHelper.getMaxSimiliraty;
 
@@ -17,11 +20,14 @@ public class CommandHelper {
     public static final String ADD_CONTACT_TEXT = "Додати контакт";
     public static final String CALL_CONTACT_TEXT = "Зателефонувати";
     public static final String READ_UNREADED_SMS_TEXT = "Прочитати нові повідомлення";
-
+    public static final String BRIGTNESS_ON_TEXT = "Збільшити яскравість єкрану";
+    public static final String BRIGTNESS_OFF_TEXT = "Зменшити яскравість єкрану";
 
     public enum Functions {
         ADD_CONTACT (ADD_CONTACT_TEXT),
         CALL_CONTACT (CALL_CONTACT_TEXT),
+        BRIGTNES_ON(BRIGTNESS_ON_TEXT),
+        BRIGTNES_OFF(BRIGTNESS_OFF_TEXT),
         UNREADED_SMS (READ_UNREADED_SMS_TEXT);
 
         public String name;
@@ -67,6 +73,22 @@ public class CommandHelper {
             case UNREADED_SMS:
                 Log.e("123", CALL_CONTACT_TEXT + " "  + speechText);
                 SMSHelper.readUnreadedSms(context);
+                break;
+            case BRIGTNES_ON: {
+                context.view.getBackground().setAlpha(0);
+                WindowManager.LayoutParams layout = context.getWindow().getAttributes();
+                layout.screenBrightness = 1F;
+                context.getWindow().setAttributes(layout);
+            }
+            break;
+            case BRIGTNES_OFF:
+            {
+                context.view.setBackgroundColor(Color.parseColor("#000000"));
+                WindowManager.LayoutParams layout = context.getWindow().getAttributes();
+                layout.screenBrightness = 0F;
+                context.getWindow().setAttributes(layout);
+            }
+            break;
         }
     }
 
