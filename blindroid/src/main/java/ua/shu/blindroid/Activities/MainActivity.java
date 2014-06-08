@@ -17,6 +17,7 @@ import android.widget.TextView;
 import ua.shu.blindroid.Entity.Contact;
 import ua.shu.blindroid.Helper.CommandHelper;
 import ua.shu.blindroid.Helper.PhoneCall.IncomingCallHelper;
+import ua.shu.blindroid.Helper.SimilarityHelper;
 import ua.shu.blindroid.Helper.SpeechHelper;
 import ua.shu.blindroid.MainApplication;
 import ua.shu.blindroid.R;
@@ -77,9 +78,10 @@ public class MainActivity extends Activity {
 
             txtText.setText(text.get(0));
 
+
         switch (requestCode) {
             case START_CODE_SPEECH: {
-                CommandHelper.parseCommand(text.get(0), MainActivity.this);
+                SimilarityHelper.getSimilarityForString(text.get(0));
             }
             break;
 
