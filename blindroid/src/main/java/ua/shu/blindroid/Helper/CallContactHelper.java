@@ -18,6 +18,9 @@ public class CallContactHelper {
         if (speechWords.length > 1) {
             String fieldText = speechText.split(" ", 2)[1];
             ArrayList<Contact> contactList = ContactsHelper.getDeviceContactList(context);
+
+
+
             Contact startContact = null;
             double startSimilarity = 0;
 

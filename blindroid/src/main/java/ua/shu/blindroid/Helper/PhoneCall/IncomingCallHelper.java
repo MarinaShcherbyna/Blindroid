@@ -49,7 +49,7 @@ public class IncomingCallHelper {
 //                toast.show();
 
                 String contactName = ContactsHelper.getContactName(context, incomingNumber);
-                SpeechHelper.speechText(context, "Тэлеэфонуйе - " + contactName);
+                SpeechHelper.speechText(context, "Тэлеэфонуэ - " + contactName);
 
             }
         }

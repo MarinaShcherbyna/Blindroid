@@ -87,5 +87,20 @@ public class SpeechHelper {
             }
     }
 
+    public static String transformTextToUkrainianSpeech(String outputText) {
+
+        String resultString;
+        resultString = outputText.replaceAll("е","є");
+        resultString = resultString.replaceAll("э","е");
+        resultString = resultString.replaceAll("и","ы");
+        resultString = resultString.replaceAll("і","и");
+        resultString = resultString.replaceAll("ї","йи");
+        resultString = resultString.replaceAll("йо","ё");
+        resultString = resultString.replaceAll("щ","шч");
+        resultString = resultString.replaceAll("`","ъ");
+
+        return resultString;
+    }
+
 
 }

@@ -65,7 +65,7 @@ public class CommandHelper {
                     Log.e("123", "Result contact name - " + contact.name + " with phone : " + contact.phoneNumber);
 //                    CallContactHelper.callContact(contact, context);
                     context.txtText.setText("Result contact name - " + contact.name + " with phone : " + contact.phoneNumber);
-                    String resultText = "Зателефонувати - " + contact.name + " за номером : " + contact.phoneNumber + "?";
+                    String resultText = "Зателефонуваты - " + contact.name + "?";
                     context.lastContact = contact;
                     CommandHelper.checkSpeech(resultText, context);
                 }

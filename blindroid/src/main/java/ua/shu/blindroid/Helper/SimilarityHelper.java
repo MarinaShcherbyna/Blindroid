@@ -3,6 +3,8 @@ package ua.shu.blindroid.Helper;
 
 import android.util.Log;
 
+import java.util.Objects;
+
 import ua.shu.blindroid.Helper.SimilarityAlghoritms.LevenshteinDistance;
 import ua.shu.blindroid.Helper.SimilarityAlghoritms.StringScore;
 
@@ -72,5 +74,9 @@ public class SimilarityHelper {
         return speechText.split(" ");
     }
 
+//    public static Object getMostSimilarity(Object name, Object[] nameList)
+//    {
+//
+//    }
 
 }
