@@ -8,6 +8,7 @@ import android.util.Log;
 import java.util.ArrayList;
 
 import ua.shu.blindroid.Entity.Contact;
+import ua.shu.blindroid.Helper.SimilarityAlghoritms.JaroWinklerDistance;
 import ua.shu.blindroid.Helper.SimilarityAlghoritms.LevenshteinDistance;
 
 public class CallContactHelper {
@@ -19,19 +20,31 @@ public class CallContactHelper {
             String fieldText = speechText.split(" ", 2)[1];
             ArrayList<Contact> contactList = ContactsHelper.getDeviceContactList(context);
 
-
-
-            Contact startContact = null;
+            Contact startContact = null,jaroCurrFunc = null;
             double startSimilarity = 0;
+            double jaroSimilarity = 0;
 
             for (Contact contact : contactList) {
                 double contactSimilarity = LevenshteinDistance.similarity(fieldText, contact.name);
-                Log.e("123", contact.name + " have "  + contactSimilarity + "similarity with '" + fieldText + "'");
+
                 if (contactSimilarity > startSimilarity) {
                     startSimilarity = contactSimilarity;
                     startContact = contact;
                 }
+
+                double jaroFuncSimilarity = JaroWinklerDistance.getSimilarity(fieldText, contact.name);
+                if (jaroSimilarity < jaroFuncSimilarity) {
+                    jaroCurrFunc = contact;
+                    jaroSimilarity = jaroFuncSimilarity;
+                }
+
             }
+
+            Log.e("123", "JaroResult function - " + jaroCurrFunc.name + "  " + jaroSimilarity);
+            Log.e("123", "Levensteint function - " + startContact.name + "  " + startSimilarity);
+
+            if (jaroSimilarity > startSimilarity) return jaroCurrFunc;
+            if (jaroSimilarity < startSimilarity) return startContact;
 
             if (startSimilarity < 0.3) return null;
             return startContact;

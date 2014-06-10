@@ -5,6 +5,7 @@ import android.util.Log;
 
 import java.util.Objects;
 
+import ua.shu.blindroid.Helper.SimilarityAlghoritms.JaroWinklerDistance;
 import ua.shu.blindroid.Helper.SimilarityAlghoritms.LevenshteinDistance;
 import ua.shu.blindroid.Helper.SimilarityAlghoritms.StringScore;
 
@@ -14,8 +15,8 @@ public class SimilarityHelper {
 
     public static Functions getMaxSimiliraty(String speechText)
     {
-        double similarity = 0;
-        Functions currFunction = null;
+        double similarity = 0, jaroSimilarity = 0;
+        Functions currFunction = null,jaroCurrFunc = null;
 
         for (Functions func : Functions.values()) {
             String str;
@@ -32,7 +33,22 @@ public class SimilarityHelper {
                 currFunction = func;
                 similarity = funcSimilarity;
             }
+
+            double jaroFuncSimilarity = JaroWinklerDistance.getSimilarity(str, func.name);
+            if (jaroSimilarity < jaroFuncSimilarity) {
+                jaroCurrFunc = func;
+                jaroSimilarity = jaroFuncSimilarity;
+            }
+
         }
+
+        Log.e("123", "JaroResult function - " + jaroCurrFunc.name() + "  " + jaroSimilarity);
+        Log.e("123", "Levensteint function - " + currFunction.name() + "  " + similarity);
+
+        if (jaroSimilarity > similarity) return jaroCurrFunc;
+        if (jaroSimilarity < similarity) return currFunction;
+
+
 
         return currFunction;
     }
